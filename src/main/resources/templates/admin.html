@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en" style="width: 1903px;height: 965px;">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+          crossorigin="anonymous">
+
+    <title>Admin</title>
+</head>
+<body style="height: 965px;border-style: none;background: rgb(248,249,250);width: 1903px;margin-left: 0;">
+
+<!--хедер с именем аккаунта, ролью и кнопкой logout-->
+<div class="row" style="background: rgb(52,58,64);">
+    <div class="col d-xxl-flex justify-content-xxl-start align-items-xxl-center">
+        <span class="text-white"
+              style="padding-right: 0;
+              margin: 5px 10px;"
+              id="adminHeader">
+        </span>
+    </div>
+    <div class="col d-xxl-flex justify-content-xxl-end align-items-xxl-center">
+        <form th:method="POST" th:action="@{/logout}">
+            <button class="btn btn-secondary btn-sm link-secondary d-xxl-flex" type="submit"
+                    style="margin: 5px;
+                    background: #ffffff00;
+                    border-style: none;">
+                Logout
+            </button>
+        </form>
+    </div>
+</div>
+<!--хедер с именем аккаунта, ролью и кнопкой logout-->
+
+<!--мейн-->
+<div class="row" style="margin-top: 20px;height: 926px;">
+
+    <!--панель слева-->
+    <div class="col-auto" style="background: #ffffff;padding-right: 0;">
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-pills nav-fill flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active text-start" data-toggle="tab" id="homeTab" href="#adminPanel"
+                           style="width: 225px;border-style: none;"
+                        >Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-start" data-toggle="tab" href="#userPanel"
+                           style="width: 225px;border-style: none;margin-top: -2px;">
+                            User
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--панель слева-->
+
+    <div class="col-auto"></div>
+
+    <!--панель по центру-->
+    <div class="col" style="background: rgba(248, 249, 250, 0);">
+
+        <!--загаловок админ-панели-->
+        <div class="row">
+            <div class="col"
+                 style="padding-left: 0;
+                 margin-bottom: 14px;">
+                <strong class="fs-1">
+                    Admin Panel
+                </strong>
+            </div>
+        </div>
+        <!--загаловок админ-панели-->
+
+        <!--админ-панель-->
+        <div class="row">
+            <div class="tab-content" style="background: #ffffff;padding-left: 0;">
+
+                <div class="tab-pane fade show active" id="adminPanel" role="tabpanel">
+
+                    <!--переключение между таблицей и добавлением пользователя-->
+                    <nav>
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" id="usersTable" href="#allUsers">
+                                    <span style="color: #495057;
+                                    background-color: #fff;">
+                                    Users table
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#newUser">
+                                    New User
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <!--переключение между таблицей и добавлением пользователя-->
+
+                    <!--таблица пользователей-->
+                    <div class="tab-content" id="nav-tabContent">
+
+                        <div class="tab-pane fade show active" id="allUsers" role="tabpanel">
+
+                            <!--загаловок все пользователи-->
+                            <div class="row" style="background: rgb(247,247,247);">
+                                <div class="col" style="margin-top: 5px;margin-bottom: 5px;">
+                                    <strong class="fs-4">
+                                        All Users
+                                    </strong>
+                                </div>
+                            </div>
+                            <!--загаловок все пользователи-->
+
+                            <!--таблица-->
+                            <div class="table-responsive" style="padding-left: 15px;">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Age</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableUsers">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!--таблица-->
+
+                            <!--обновление пользователя-->
+                            <div class="modal fade"
+                                 tabindex="-1"
+                                 id="updateModal"
+                                 aria-labelledby="update"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Edit User</h4>
+                                            <button class="btn-close"
+                                                    type="button"
+                                                    data-dismiss="modal">
+                                            </button>
+                                        </div>
+                                        <form id="formUpdate">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col"></div>
+                                                    <div class="col">
+                                                        <label for="update-id"
+                                                               class="form-label
+                                                               fw-semibold
+                                                               d-xxl-flex
+                                                               justify-content-xxl-center
+                                                               align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                               margin-bottom: 5px;">
+                                                            ID
+                                                        </label>
+                                                        <input class="form-control
+                                                        d-xxl-flex
+                                                        justify-content-xxl-center
+                                                        align-items-xxl-center"
+                                                               type="number"
+                                                               id="update-id"
+                                                               name="id"
+                                                               disabled/>
+                                                        <label for="update-firstname"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            First Name
+                                                        </label>
+                                                        <input class="form-control
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               type="text"
+                                                               id="update-firstname"
+                                                               name="firstname"
+                                                               required/>
+
+                                                        <label for="update-lastname"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            Last Name
+                                                        </label>
+                                                        <input class="form-control"
+                                                               type="text"
+                                                               id="update-lastname"
+                                                               name="lastname"
+                                                               required/>
+
+                                                        <label for="update-age"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            Age
+                                                        </label>
+                                                        <input class="form-control"
+                                                               type="number"
+                                                               name="age"
+                                                               id="update-age"
+                                                               required/>
+
+                                                        <label for="update-username"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;margin-bottom: 5px;">
+                                                            Email
+                                                        </label>
+                                                        <input class="form-control"
+                                                               type="email"
+                                                               id="update-username"
+                                                               name="username"
+                                                               required/>
+
+                                                        <label for="update-password"
+                                                               class="form-label
+                                                                            fw-semibold
+                                                                            d-xxl-flex
+                                                                            justify-content-xxl-center
+                                                                            align-items-xxl-center"
+                                                               style="margin-bottom: 5px;
+                                                                            margin-top: 5px;">
+                                                            Password
+                                                        </label>
+                                                        <input class="form-control"
+                                                               type="password"
+                                                               id="update-password"
+                                                               name="password"
+                                                               required/>
+                                                        <label for="update-roles"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;">
+                                                            Role
+                                                        </label>
+                                                        <select multiple="multiple"
+                                                                class="form-select"
+                                                                size="2"
+                                                                id="update-roles"
+                                                                name="roles"
+                                                                required>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col"></div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button"
+                                                        class="btn btn-secondary"
+                                                        data-dismiss="modal"
+                                                        id="updateClose">
+                                                    Close
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    Edit
+                                                </button>
+
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--обновление пользователя-->
+
+                            <!--удаление пользователя-->
+                            <div class="modal fade"
+                                 tabindex="-1"
+                                 id="deleteModal"
+                                 aria-labelledby="update"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Delete User</h4>
+                                            <button class="btn-close"
+                                                    type="button"
+                                                    data-dismiss="modal">
+                                            </button>
+                                        </div>
+                                        <form id="formDelete">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col"></div>
+                                                    <div class="col">
+                                                        <label for="delete-id"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            ID
+                                                        </label>
+                                                        <input class="form-control"
+                                                               type="number"
+                                                               name="id"
+                                                               id="delete-id"
+                                                               disabled>
+                                                        <label for="delete-firstname"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            First Name
+                                                        </label>
+                                                        <input class="form-control
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               name="firstname"
+                                                               type="text"
+                                                               id="delete-firstname"
+                                                               disabled/>
+                                                        <label for="delete-lastname"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            Last Name
+                                                        </label>
+                                                        <input class="form-control"
+                                                               name="lastname"
+                                                               type="text"
+                                                               id="delete-lastname"
+                                                               disabled/>
+                                                        <label for="delete-age"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            Age
+                                                        </label>
+                                                        <input class="form-control"
+                                                               name="age"
+                                                               type="number"
+                                                               id="delete-age"
+                                                               disabled/>
+                                                        <label for="delete-username"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;
+                                                                               margin-bottom: 5px;">
+                                                            Email
+                                                        </label>
+                                                        <input class="form-control"
+                                                               name="username"
+                                                               type="email"
+                                                               id="delete-username"
+                                                               disabled/>
+                                                        <label for="delete-roles"
+                                                               class="form-label
+                                                                        fw-semibold
+                                                                        d-xxl-flex
+                                                                        justify-content-xxl-center
+                                                                        align-items-xxl-center"
+                                                               style="margin-top: 5px;">
+                                                            Role
+                                                        </label>
+                                                        <select multiple="multiple"
+                                                                class="form-select"
+                                                                size="2"
+                                                                id="delete-roles"
+                                                                name="roles"
+                                                                disabled>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col"></div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button"
+                                                        class="btn btn-secondary"
+                                                        id="deleteClose"
+                                                        data-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button class="btn btn-danger"
+                                                        type="submit">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--обновление пользователя-->
+
+                        </div>
+
+                        <!--добавление пользователя-->
+                        <div class="tab-pane fade"
+                             id="newUser"
+                             role="tabpanel"
+                             aria-labelledby="nav-new_user-tab">
+
+                            <div class="row" style="background: rgb(247,247,247);">
+                                <div class="col"
+                                     style="margin-top: 5px;
+                                     margin-bottom: 5px;">
+                                    <strong class="fs-4">
+                                        Add new User
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col">
+                                    <form id="addUser">
+                                        <label for="add-firstname"
+                                               class="form-label
+                                        fw-semibold
+                                        d-xxl-flex
+                                        justify-content-xxl-center
+                                        align-items-xxl-center"
+                                               style="margin-top: 5px;margin-bottom: 5px;">
+                                            First Name
+                                        </label>
+                                        <input class="form-control
+                                        d-xxl-flex
+                                        justify-content-xxl-center
+                                        align-items-xxl-center"
+                                               type="text"
+                                               id="add-firstname"
+                                               name="firstname"
+                                               required>
+
+                                        <label for="add-lastname"
+                                               class="form-label
+                                        fw-semibold
+                                        d-xxl-flex
+                                        justify-content-xxl-center
+                                        align-items-xxl-center"
+                                               style="margin-top: 5px;
+                                               margin-bottom: 5px;">
+                                            Last Name
+                                        </label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="add-lastname"
+                                               name="lastname"
+                                               required>
+
+                                        <label for="add-age"
+                                               class="form-label
+                                        fw-semibold
+                                        d-xxl-flex
+                                        justify-content-xxl-center
+                                        align-items-xxl-center"
+                                               style="margin-top: 5px;margin-bottom: 5px;">
+                                            Age
+                                        </label>
+                                        <input type="number"
+                                               min="1"
+                                               class="form-control"
+                                               id="add-age"
+                                               name="age"
+                                               required>
+
+                                        <label for="add-username"
+                                               class="form-label
+                                            fw-semibold
+                                            d-xxl-flex
+                                            justify-content-xxl-center
+                                            align-items-xxl-center"
+                                               style="margin-top: 5px;
+                                            margin-bottom: 5px;">
+                                            Email
+                                        </label>
+                                        <input type="email" class="form-control"
+                                               id="add-username"
+                                               name="username"
+                                               required>
+
+                                        <label for="add-password"
+                                               class="form-label
+                                        fw-semibold
+                                        d-xxl-flex
+                                        justify-content-xxl-center
+                                        align-items-xxl-center"
+                                               style="margin-bottom: 5px;
+                                               margin-top: 5px;">
+                                            Password
+                                        </label>
+                                        <input type="password"
+                                               class="form-control"
+                                               id="add-password"
+                                               name="password"
+                                               required>
+
+                                        <label class="form-label
+                                        fw-semibold
+                                        d-xxl-flex
+                                        justify-content-xxl-center
+                                        align-items-xxl-center"
+                                               style="margin-top: 5px;">
+                                            Role
+                                        </label>
+                                        <label for="add-roles"></label>
+                                        <select class="form-select"
+                                                multiple="multiple"
+                                                size="2"
+                                                id="add-roles"
+                                                name="roles"
+                                                required>
+
+                                        </select>
+                                        <div class="row d-xxl-flex justify-content-xxl-center align-items-xxl-center">
+                                            <div class="col d-xxl-flex justify-content-xxl-center align-items-xxl-center">
+                                                <input class="btn btn-success d-xxl-flex justify-content-xxl-center align-items-xxl-center"
+                                                       type="submit" value="Add new User"
+                                                       style="margin-top: 5px;margin-bottom: 5px;" required>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+                        </div>
+                        <!--добавление пользователя-->
+
+                    </div>
+                    <!--таблица пользователей-->
+
+                </div>
+
+                <!--переключение на таблицу пользователя-админа-->
+                <div class="tab-pane" id="userPanel">
+                    <div class="col" style="background: #ffffff;padding-left: 0;">
+                        <div class="row" style="background: rgb(247,247,247);">
+                            <div class="col" style="margin-top: 5px;margin-bottom: 5px;"><strong class="fs-4">About
+                                User</strong></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="table-responsive" style="padding-left: 15px;">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Age</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="adminTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--переключение на таблицу пользователя-админа-->
+
+            </div>
+        </div>
+        <!--админ-панель-->
+
+    </div>
+    <!--панель по центру-->
+
+    <div class="col-auto"></div>
+</div>
+<!--мейн-->
+
+<script type="text/javascript" src="/admin.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+        integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+        integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+        crossorigin="anonymous"></script>
+</body>
+</html>
